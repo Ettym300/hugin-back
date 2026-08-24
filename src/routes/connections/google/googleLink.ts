@@ -11,7 +11,7 @@ import { googleOAuth2Client } from '../../../common/GoogleOAuth2Client';
 export function googleLink(Router: Router) {
   Router.post(
     '/connections/google/link-account',
-    body('nerimityToken').not().isEmpty().withMessage('nerimityToken is required.').isString().withMessage('nerimityToken must be a string!'),
+    body('huginToken').not().isEmpty().withMessage('huginToken is required.').isString().withMessage('huginToken must be a string!'),
     body('code').not().isEmpty().withMessage('code is required.').isString().withMessage('code must be a string!'),
     rateLimit({
       name: 'google-link-account',
@@ -24,14 +24,14 @@ export function googleLink(Router: Router) {
 }
 
 interface Body {
-  nerimityToken: string;
+  huginToken: string;
   code: string;
 }
 
 async function route(req: Request, res: Response) {
   const body: Body = req.body;
 
-  const token = await verifyAsync(body.nerimityToken).catch(() => {});
+  const token = await verifyAsync(body.huginToken).catch(() => {});
 
   if (!token) {
     return res.status(400).json(generateError('Token expired. Please try again.'));

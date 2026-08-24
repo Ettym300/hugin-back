@@ -1,6 +1,6 @@
 import { DmStatus, FriendRequestStatus, LastOnlineStatus } from './User';
 import { checkUserPassword } from '../UserAuthentication';
-import * as nerimityCDN from '../../common/nerimityCDN';
+import * as huginCDN from '../../common/huginCDN';
 import { addToObjectIfExists } from '../../common/addToObjectIfExists';
 import bcrypt from 'bcrypt';
 import { deleteAllInboxCache } from '../../cache/ChannelCache';
@@ -85,7 +85,7 @@ export const updateUser = async (opts: UpdateUserProps) => {
       if (opts.banner === null && account.user.banner) {
         pathsToDelete.push(account.user.banner);
       }
-      await nerimityCDN.deleteImageBatch(pathsToDelete);
+      await huginCDN.deleteImageBatch(pathsToDelete);
     }
   }
 

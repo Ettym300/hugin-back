@@ -1,5 +1,5 @@
 {
-  "name": "nerimity-server",
+  "name": "hugin-back",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",

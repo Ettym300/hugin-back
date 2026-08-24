@@ -2,7 +2,7 @@ import { CustomResult } from './CustomResult';
 import env from './env';
 
 function cdnUrl(pathname: string) {
-  const base = env.LOCAL_NERIMITY_CDN.endsWith('/') ? env.LOCAL_NERIMITY_CDN : env.LOCAL_NERIMITY_CDN + '/';
+  const base = env.LOCAL_HUGIN_CDN.endsWith('/') ? env.LOCAL_HUGIN_CDN : env.LOCAL_HUGIN_CDN + '/';
   return new URL(pathname.replace(/^\//, ''), base);
 }
 
@@ -58,7 +58,7 @@ function readImageMeta(buffer: Buffer): { width: number; height: number; animate
 
 async function localImageDimensions(url: string) {
   const res = await fetch(url, {
-    headers: { 'User-Agent': 'NerimityBot/1.0 (+https://nerimity.com/bot)' },
+    headers: { 'User-Agent': 'HuginBot/1.0 (+https://hugin.app/bot)' },
   }).catch(() => null);
   if (!res?.ok) return null;
   const buffer = Buffer.from(await res.arrayBuffer());
@@ -73,7 +73,7 @@ export function proxyUrlImageDimensions(url: string): Promise<CustomResult<{ wid
     fetch(endpoint, {
       method: 'GET',
       headers: {
-        Authorization: env.NERIMITY_CDN_SECRET,
+        Authorization: env.HUGIN_CDN_SECRET,
       },
     })
       .then(async (res) => {
@@ -89,11 +89,11 @@ export function proxyUrlImageDimensions(url: string): Promise<CustomResult<{ wid
 }
 
 export async function deleteFile(path: string) {
-  return await fetch(env.LOCAL_NERIMITY_CDN + 'internal', {
+  return await fetch(env.LOCAL_HUGIN_CDN + 'internal', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.HUGIN_CDN_SECRET,
     },
     body: JSON.stringify({ path }),
   }).catch((err) => {
@@ -104,10 +104,10 @@ export async function deleteFile(path: string) {
 // deletes 1000 images from a channel.
 export async function deleteChannelAttachmentBatch(channelId: string): Promise<CustomResult<{ count?: number; status: boolean }, { type: string; error?: string }>> {
   return new Promise((resolve) => {
-    fetch(env.LOCAL_NERIMITY_CDN + `internal/attachments/${channelId}/batch`, {
+    fetch(env.LOCAL_HUGIN_CDN + `internal/attachments/${channelId}/batch`, {
       method: 'DELETE',
       headers: {
-        Authorization: env.NERIMITY_CDN_SECRET,
+        Authorization: env.HUGIN_CDN_SECRET,
       },
     })
       .then(async (res) => {
@@ -119,11 +119,11 @@ export async function deleteChannelAttachmentBatch(channelId: string): Promise<C
 }
 
 export async function deleteImageBatch(paths: string[]) {
-  return await fetch(env.LOCAL_NERIMITY_CDN + 'internal/batch', {
+  return await fetch(env.LOCAL_HUGIN_CDN + 'internal/batch', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.HUGIN_CDN_SECRET,
     },
     body: JSON.stringify({ paths }),
   }).catch((e) => {});
@@ -150,13 +150,13 @@ export interface VerifyResponse {
   expireAt?: number;
 }
 export async function verifyUpload(opts: VerifyUploadOpts) {
-  const url = new URL(env.LOCAL_NERIMITY_CDN);
+  const url = new URL(env.LOCAL_HUGIN_CDN);
   url.pathname = `/internal/verify-file`;
 
   return await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.HUGIN_CDN_SECRET,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -181,13 +181,13 @@ export interface GenerateTokenResponse {
   token: string;
 }
 export async function generateToken(opts: GenerateTokenOps) {
-  const url = new URL(env.LOCAL_NERIMITY_CDN);
+  const url = new URL(env.LOCAL_HUGIN_CDN);
   url.pathname = `/internal/generate-token`;
 
   return await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.HUGIN_CDN_SECRET,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

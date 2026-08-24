@@ -23,7 +23,7 @@ const origin = (): string | string[] => {
 export default {
   DEV_MODE: process.env.DEV_MODE === 'true',
   API_PORT: parseInt(process.env.API_PORT as string),
-  NERIMITY_EMBED_BOT_PRIVATE_KEY: JSON.parse((process.env.NERIMITY_EMBED_BOT_PRIVATE_KEY as string) || 'null') as JsonWebKey | null,
+  HUGIN_EMBED_BOT_PRIVATE_KEY: JSON.parse((process.env.HUGIN_EMBED_BOT_PRIVATE_KEY as string) || 'null') as JsonWebKey | null,
   WS_PORT: parseInt(process.env.WS_PORT as string),
   JWT_SECRET: unquote(process.env.JWT_SECRET) as string,
   CONNECTIONS_SECRET: unquote(process.env.CONNECTIONS_SECRET) as string,
@@ -36,9 +36,9 @@ export default {
   REDIS_PASS: unquote(process.env.REDIS_PASS) as string,
   ORIGIN: origin(),
   CLIENT_URL: unquote(process.env.CLIENT_URL) as string,
-  NERIMITY_CDN: unquote(process.env.NERIMITY_CDN) as string,
-  LOCAL_NERIMITY_CDN: unquote(process.env.LOCAL_NERIMITY_CDN) as string,
-  NERIMITY_CDN_SECRET: unquote(process.env.NERIMITY_CDN_SECRET) as string,
+  HUGIN_CDN: unquote(process.env.HUGIN_CDN) as string,
+  LOCAL_HUGIN_CDN: unquote(process.env.LOCAL_HUGIN_CDN) as string,
+  HUGIN_CDN_SECRET: unquote(process.env.HUGIN_CDN_SECRET) as string,
   CDN_DATA_DIR: unquote(process.env.CDN_DATA_DIR) || '.dev-cdn',
 
   MAX_CHANNELS_PER_SERVER: parseInt(process.env.MAX_CHANNELS_PER_SERVER || '100') as number,

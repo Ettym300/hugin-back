@@ -2,7 +2,7 @@ import { cpus } from 'node:os';
 import { getPostLikesFromDeletedUsers, prisma } from './common/database';
 import { Log } from './common/Log';
 import schedule from 'node-schedule';
-import { deleteChannelAttachmentBatch, deleteImageBatch } from './common/nerimityCDN';
+import { deleteChannelAttachmentBatch, deleteImageBatch } from './common/huginCDN';
 import env from './common/env';
 import { connectRedis, customRedisFlush, redisClient } from './common/redis';
 import { getAndRemovePostViewsCache } from './cache/PostViewsCache';

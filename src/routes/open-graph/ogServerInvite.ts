@@ -30,10 +30,10 @@ async function route(req: Request, res: Response, next: NextFunction) {
   const avatarPath = invite.server.avatar;
 
   const og = makeOpenGraph({
-    url: `https://nerimity.com/i/${inviteId}`,
-    title: `${invite.server.name} Server on Nerimity`,
-    description: `You are invited to join the ${invite.server.name} server on Nerimity.`,
-    imageUrl: avatarPath ? `${env.NERIMITY_CDN}${avatarPath}` : undefined,
+    url: `https://hugin.app/i/${inviteId}`,
+    title: `${invite.server.name} Server on HUGIN`,
+    description: `You are invited to join the ${invite.server.name} server on HUGIN.`,
+    imageUrl: avatarPath ? `${env.HUGIN_CDN}${avatarPath}` : undefined,
   });
 
   res.send(og);

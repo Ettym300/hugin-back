@@ -4,7 +4,7 @@ import { customExpressValidatorResult, generateError } from '../../common/errorH
 import { authenticate } from '../../middleware/authenticate';
 import { rateLimit } from '../../middleware/rateLimit';
 import { createPost } from '../../services/Post';
-import { verifyUpload } from '../../common/nerimityCDN';
+import { verifyUpload } from '../../common/huginCDN';
 import { UserCache } from '../../cache/UserCache';
 import { generateId } from '../../common/flakeId';
 
@@ -21,7 +21,7 @@ export function postCreate(Router: Router) {
     body('postId').isString().withMessage('postId must be a string!').isLength({ min: 1, max: 500 }).withMessage('Content length must be between 1 and 500 characters.').optional(true),
 
     body('poll.choices').isArray({ min: 0, max: 6 }).withMessage('Poll must be an array with minimum 6 choices').optional(true),
-    body('nerimityCdnFileId').optional(true).isString().withMessage('nerimityCdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('nerimityCdnFileId length must be between 1 and 255 characters.'),
+    body('cdnFileId').optional(true).isString().withMessage('cdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('cdnFileId length must be between 1 and 255 characters.'),
 
     body('poll.choices.*').isString().withMessage('Poll choices must be an array of strings').isLength({ min: 0, max: 56 }).withMessage('Poll choices length must be between 1 and 50 characters').optional(true),
     route,
@@ -34,7 +34,7 @@ interface Body {
   poll?: {
     choices: string[];
   };
-  nerimityCdnFileId?: string;
+  cdnFileId?: string;
 }
 
 async function route(req: Request, res: Response) {
@@ -58,15 +58,15 @@ async function route(req: Request, res: Response) {
     return res.status(400).json(generateError('You must confirm your email to create posts.'));
   }
 
-  if (!body.content?.trim() && !body.nerimityCdnFileId) {
+  if (!body.content?.trim() && !body.cdnFileId) {
     return res.status(400).json(generateError('content or attachment is required.'));
   }
 
   let attachment: { width?: number; height?: number; path: string } | undefined = undefined;
 
-  if (body.nerimityCdnFileId) {
+  if (body.cdnFileId) {
     const [uploadedFile, err] = await verifyUpload({
-      fileId: body.nerimityCdnFileId,
+      fileId: body.cdnFileId,
       groupId: req.userCache.id,
       userId: req.userCache.id,
       imageOnly: true,

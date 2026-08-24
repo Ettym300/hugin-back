@@ -7,7 +7,7 @@ import { memberHasRolePermissionMiddleware } from '../../middleware/memberHasRol
 import { rateLimit } from '../../middleware/rateLimit';
 import { serverMemberVerification } from '../../middleware/serverMemberVerification';
 import { updateServer } from '../../services/Server';
-import { verifyUpload } from '../../common/nerimityCDN';
+import { verifyUpload } from '../../common/huginCDN';
 import { hasBadWord } from '../../common/badWords';
 import env from '../../common/env';
 

@@ -35,7 +35,7 @@ function mimeToExt(mimeType: string, filename: string) {
 }
 
 function requireSecret(req: Request, res: Response, next: NextFunction) {
-  const expected = (env.NERIMITY_CDN_SECRET || '').trim();
+  const expected = (env.HUGIN_CDN_SECRET || '').trim();
   const received = String(req.headers.authorization || '').trim();
   if (!expected || received !== expected) {
     res.status(401).json({ message: 'Invalid CDN secret' });
@@ -160,7 +160,7 @@ export function startDevCdn() {
 
   let port = 8003;
   try {
-    port = parseInt(new URL(env.LOCAL_NERIMITY_CDN).port || '8003', 10);
+    port = parseInt(new URL(env.LOCAL_HUGIN_CDN).port || '8003', 10);
   } catch {
     port = 8003;
   }

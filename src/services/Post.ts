@@ -3,7 +3,7 @@ import { CustomResult } from '../common/CustomResult';
 import { dateToDateTime, prisma, publicUserExcludeFields } from '../common/database';
 import { CustomError, generateError } from '../common/errorHandler';
 import { generateId } from '../common/flakeId';
-import { deleteFile } from '../common/nerimityCDN';
+import { deleteFile } from '../common/huginCDN';
 import { FriendStatus } from '../types/Friend';
 import { getBlockedUserIds, isUserBlocked } from './User/User';
 import { replaceBadWords } from '../common/badWords';

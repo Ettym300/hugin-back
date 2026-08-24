@@ -27,10 +27,10 @@ async function route(req: Request, res: Response, next: NextFunction) {
   const avatarPath = user.avatar;
 
   const og = makeOpenGraph({
-    url: `https://nerimity.com/app/profile/${userId}`,
-    title: `${user.username}'s Profile on Nerimity`,
-    description: `${user.profile?.bio || `Browse ${user.username}'s profile on Nerimity.`}`,
-    imageUrl: avatarPath ? `${env.NERIMITY_CDN}${avatarPath}` : undefined,
+    url: `https://hugin.app/app/profile/${userId}`,
+    title: `${user.username}'s Profile on HUGIN`,
+    description: `${user.profile?.bio || `Browse ${user.username}'s profile on HUGIN.`}`,
+    imageUrl: avatarPath ? `${env.HUGIN_CDN}${avatarPath}` : undefined,
     color: user.profile?.primaryColor,
   });
 

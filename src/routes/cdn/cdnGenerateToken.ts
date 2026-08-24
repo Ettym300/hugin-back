@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { authenticate } from '../../middleware/authenticate';
 import { rateLimit } from '../../middleware/rateLimit';
-import { generateToken } from '@src/common/nerimityCDN';
+import { generateToken } from '@src/common/huginCDN';
 import { generateError } from '@src/common/errorHandler';
 import { Log } from '@src/common/Log';
 

@@ -30,8 +30,8 @@ export async function turnstileVerify(token: string, remoteIp?: string): Promise
 
     const json = (await res.json()) as TurnstileResponse;
 
-    // Hostname used to be locked to nerimity.com. Keep disabled for self-hosted Concord.
-    // if (json.hostname !== 'nerimity.com') {
+    // Hostname used to be locked to hugin.app. Keep disabled for self-hosted Concord.
+    // if (json.hostname !== 'hugin.app') {
     //   return false;
     // }
 

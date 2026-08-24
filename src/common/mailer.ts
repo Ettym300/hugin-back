@@ -23,9 +23,9 @@ interface Options {
 
 export async function sendMail(opts: Options) {
   return await transporter.sendMail({
-    from: `Nerimity ${env.SMTP_FROM}`,
+    from: `HUGIN ${env.SMTP_FROM}`,
     to: opts.to.toLowerCase().trim(),
-    subject: `${opts.subject} - Nerimity`,
+    subject: `${opts.subject} - HUGIN`,
     html: opts.body,
     text: opts.text,
   });
@@ -49,10 +49,10 @@ export async function sendConfirmCodeMail(code: string, to: string) {
       <meta content="width=device-width,initial-scale=1" name="viewport"/>
         <body style="color:#fff;font-family:Arial">
           <div style="background:#000;border-radius:8px;padding:5px;width:100%;display:inline-block">
-            <a href="https://nerimity.com" style="text-decoration:none;color:#fff">
+            <a href="https://hugin.app" style="text-decoration:none;color:#fff">
               <center>
-                <img src="https://nerimity.com/assets/logo.png" alt="Nerimity Logo" style="width:80px;margin-top:20px;margin-bottom:10px"/>
-                <h1 style="font-size:24px">Nerimity</h1>
+                <img src="https://hugin.app/assets/logo.png" alt="HUGIN Logo" style="width:80px;margin-top:20px;margin-bottom:10px"/>
+                <h1 style="font-size:24px">HUGIN</h1>
               </center>
             </a>
             <p style="text-align:center;padding:0;font-size:18px;margin:10px 0 20px 0">Your confirmation Code:</p>
@@ -76,10 +76,10 @@ export async function sendResetPasswordMail(link: string, to: string) {
       <meta content="width=device-width,initial-scale=1" name="viewport"/>
       <body style="color:#fff;font-family:Arial">
         <div style="background:#000;border-radius:8px;padding:5px;width:100%;display:inline-block">
-          <a href="https://nerimity.com" style="text-decoration:none;color:#fff">
+          <a href="https://hugin.app" style="text-decoration:none;color:#fff">
             <center>
-              <img src="https://nerimity.com/assets/logo.png" alt="Nerimity Logo" style="width:80px;margin-top:20px;margin-bottom:10px" />
-                <h1 style="font-size:24px">Nerimity</h1>
+              <img src="https://hugin.app/assets/logo.png" alt="HUGIN Logo" style="width:80px;margin-top:20px;margin-bottom:10px" />
+                <h1 style="font-size:24px">HUGIN</h1>
               </center>
           </a>
           <p style="text-align:center;padding:0;font-size:18px;margin:10px 0 20px 0">

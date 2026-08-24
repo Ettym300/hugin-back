@@ -9,7 +9,7 @@ import { MessageType } from '../../types/Message';
 import { AttachmentProviders, createMessage } from '../../services/Message/Message';
 import { memberHasRolePermission, memberHasRolePermissionMiddleware } from '../../middleware/memberHasRolePermission';
 import { rateLimit } from '../../middleware/rateLimit';
-import { deleteFile, verifyUpload } from '../../common/nerimityCDN';
+import { deleteFile, verifyUpload } from '../../common/huginCDN';
 import { ChannelType, TextChannelTypes } from '../../types/Channel';
 import { Attachment } from '@src/generated/prisma/client';
 import { dateToDateTime, prisma } from '../../common/database';
@@ -57,7 +57,7 @@ export function channelMessageCreate(Router: Router) {
     body('googleDriveAttachment.id').optional(true).isString().withMessage('googleDriveAttachment id must be a string!').isLength({ min: 1, max: 255 }).withMessage('googleDriveAttachment id length must be between 1 and 255 characters.'),
 
     body('googleDriveAttachment.mime').optional(true).isString().withMessage('googleDriveAttachment mime must be a string!').isLength({ min: 1, max: 255 }).withMessage('googleDriveAttachment mime length must be between 1 and 255 characters.'),
-    body('nerimityCdnFileId').optional(true).isString().withMessage('nerimityCdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('nerimityCdnFileId length must be between 1 and 255 characters.'),
+    body('cdnFileId').optional(true).isString().withMessage('cdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('cdnFileId length must be between 1 and 255 characters.'),
 
     body('buttons')
       .optional(true)
@@ -120,7 +120,7 @@ interface Body {
   replyToMessageIds?: string[];
   mentionReplies?: boolean;
   silent?: boolean;
-  nerimityCdnFileId?: string;
+  cdnFileId?: string;
   googleDriveAttachment?: {
     id: string;
     mime: string;
@@ -179,7 +179,7 @@ async function route(req: Request, res: Response) {
     }
   }
 
-  const hasAttachment = body.googleDriveAttachment || body.nerimityCdnFileId;
+  const hasAttachment = body.googleDriveAttachment || body.cdnFileId;
 
   if (hasAttachment) {
     if (!isEmailConfirmed(req.userCache) && !req.userCache.bot) {
@@ -233,7 +233,7 @@ async function route(req: Request, res: Response) {
     return res.status(400).json(generateError('You cannot send messages in this channel.'));
   }
 
-  if (!body.content?.trim() && !body.nerimityCdnFileId && !body.googleDriveAttachment && !body.htmlEmbed) {
+  if (!body.content?.trim() && !body.cdnFileId && !body.googleDriveAttachment && !body.htmlEmbed) {
     return res.status(400).json(generateError('content or attachment is required.'));
   }
 
@@ -247,9 +247,9 @@ async function route(req: Request, res: Response) {
 
   let attachment: Partial<Attachment> | undefined = undefined;
 
-  if (body.nerimityCdnFileId) {
+  if (body.cdnFileId) {
     const [uploadedFile, err] = await verifyUpload({
-      fileId: body.nerimityCdnFileId,
+      fileId: body.cdnFileId,
       groupId: req.channelCache.id,
       userId: req.userCache.id,
     });

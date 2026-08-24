@@ -6,7 +6,7 @@ import { rateLimit } from '../../middleware/rateLimit';
 import { addToObjectIfExists } from '../../common/addToObjectIfExists';
 import { updateUser } from '../../services/User/updateUser';
 import { updateBot } from '../../services/Application';
-import { verifyUpload } from '../../common/nerimityCDN';
+import { verifyUpload } from '../../common/huginCDN';
 import { hasBadWord } from '../../common/badWords';
 import env from '../../common/env';
 

@@ -36,11 +36,11 @@ async function route(req: Request, res: Response, next: NextFunction) {
   const attachmentPath = attachment?.path;
 
   const og = makeOpenGraph({
-    url: `https://nerimity.com/app?postId=${postId}`,
-    title: `${post.createdBy.username} on Nerimity`,
+    url: `https://hugin.app/app?postId=${postId}`,
+    title: `${post.createdBy.username} on HUGIN`,
     description: post.content || '',
     largeImage: true,
-    imageUrl: attachmentPath ? `${env.NERIMITY_CDN}${attachmentPath}` : undefined,
+    imageUrl: attachmentPath ? `${env.HUGIN_CDN}${attachmentPath}` : undefined,
     imageWidth: attachment?.width,
     imageHeight: attachment?.height,
   });
