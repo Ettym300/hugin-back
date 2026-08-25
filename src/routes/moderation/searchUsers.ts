@@ -33,6 +33,7 @@ async function route(req: Request, res: Response) {
       joinedAt: true,
       tag: true,
       hexColor: true,
+      bot: true,
       avatar: true,
       badges: true,
       shadowBan: true,
