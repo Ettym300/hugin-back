@@ -22,7 +22,9 @@ type PendingUpload = {
 
 const pendingUploads = new Map<string, PendingUpload>();
 
-export const devCdnRoot = path.join(process.cwd(), '.dev-cdn');
+export const devCdnRoot = path.resolve(
+  env.CDN_DATA_DIR || path.join(process.cwd(), '.dev-cdn'),
+);
 export const devCdnPublicRoot = path.join(devCdnRoot, 'public');
 export const devCdnTempRoot = path.join(devCdnRoot, 'temp');
 

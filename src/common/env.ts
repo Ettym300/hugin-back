@@ -34,6 +34,8 @@ export default {
   RUGIN_CDN: process.env.RUGIN_CDN as string,
   LOCAL_RUGIN_CDN: process.env.LOCAL_RUGIN_CDN as string,
   RUGIN_CDN_SECRET: process.env.RUGIN_CDN_SECRET as string,
+  CDN_DATA_DIR: (process.env.CDN_DATA_DIR as string) || '',
+  CDN_PORT: parseInt(process.env.CDN_PORT || '8003'),
 
   MAX_CHANNELS_PER_SERVER: parseInt(process.env.MAX_CHANNELS_PER_SERVER || '0') as number,
   MAX_INVITES_PER_SERVER: parseInt(process.env.MAX_INVITES_PER_SERVER || '0') as number,
