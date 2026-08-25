@@ -51,7 +51,7 @@ const server = http.createServer(app);
 const main = async () => {
   await connectRedis();
   Log.info('Connected to Redis');
-  createIO(server);
+  await createIO(server);
 
   prisma.$connect().then(() => {
     Log.info('Connected to PostgreSQL');

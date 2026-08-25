@@ -95,27 +95,30 @@ export const joinVoiceChannel = async (userId: string, socketId: string, channel
 
 export const leaveVoiceChannel = async (userId: string, channelId?: string) => {
   const voiceUser = await getVoiceUserByUserId(userId);
-  // Idempotent: already out (or orphan Redis pointer) must not block rejoin.
-  if (!voiceUser) {
-    await removeVoiceUserByUserId(userId);
+  // Always clear Redis for this user. Never 403 on channel mismatch — that left
+  // ghosts in the call for everyone else while the leaver's UI already cleared.
+  const leftChannelId = voiceUser?.channelId ?? channelId;
+
+  await removeVoiceUserByUserId(userId, channelId);
+
+  if (!leftChannelId) {
     return [true, null] as const;
   }
 
-  if (channelId && voiceUser.channelId !== channelId) {
-    return [null, generateError('You are not in this channel.')] as const;
-  }
-  const [channelCache] = await getChannelForUserCache(voiceUser.channelId, userId);
+  const [channelCache] = await getChannelForUserCache(leftChannelId, userId);
 
-  if (!channelCache) {
-    await removeVoiceUserByUserId(userId);
-    return [true, null] as const;
-  }
-  await removeVoiceUserByUserId(userId);
-
-  if (channelCache.serverId) {
-    emitServerVoiceUserLeft(voiceUser.channelId, userId);
-  } else {
+  if (channelCache?.serverId) {
+    emitServerVoiceUserLeft(leftChannelId, userId);
+  } else if (channelCache) {
     emitDMVoiceUserLeft(channelCache, userId);
+  } else {
+    // Channel gone / no access — still notify room so peers drop the ghost.
+    emitServerVoiceUserLeft(leftChannelId, userId);
+  }
+
+  // If client asked to leave channel A but Redis had them in B, clear both views.
+  if (channelId && voiceUser?.channelId && channelId !== voiceUser.channelId) {
+    emitServerVoiceUserLeft(channelId, userId);
   }
 
   return [true, null] as const;

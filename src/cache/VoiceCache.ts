@@ -26,18 +26,26 @@ export async function getVoiceUserByUserId(
     VOICE_USERS_KEY_HASH(channelId),
     userId
   );
-  if (!stringJson) return null;
+  // Pointer without hash entry: still treat as in that channel so leave emits.
+  if (!stringJson) {
+    return { channelId, userId, socketId: '' };
+  }
   const parsedJson = JSON.parse(stringJson);
-  return { ...parsedJson, channelId };
+  return { ...parsedJson, channelId, userId };
 }
 
-export async function removeVoiceUserByUserId(userId: string) {
-  const channelId = await redisClient.get(VOICE_USER_CHANNEL_ID_SET(userId));
+export async function removeVoiceUserByUserId(userId: string, fallbackChannelId?: string) {
+  const channelId =
+    (await redisClient.get(VOICE_USER_CHANNEL_ID_SET(userId))) || fallbackChannelId || null;
 
   const multi = redisClient.multi();
   multi.del(VOICE_USER_CHANNEL_ID_SET(userId));
   if (channelId) {
     multi.hDel(VOICE_USERS_KEY_HASH(channelId), userId);
+  }
+  // Orphan: pointer missing/wrong but hash still has the user under the leave URL.
+  if (fallbackChannelId && fallbackChannelId !== channelId) {
+    multi.hDel(VOICE_USERS_KEY_HASH(fallbackChannelId), userId);
   }
 
   await multi.exec();
