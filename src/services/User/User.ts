@@ -785,8 +785,7 @@ export async function toggleBadge(userId: string, badgeBit: number) {
   const isFreeBadge =
     isOverlay ||
     badgeBit === USER_BADGES.SUPPORTER.bit ||
-    badgeBit === USER_BADGES.EMO_SUPPORTER.bit ||
-    badgeBit === USER_BADGES.PALESTINE.bit;
+    badgeBit === USER_BADGES.EMO_SUPPORTER.bit;
 
   if ('removable' in badge) {
     if (!badge.removable) {

@@ -153,11 +153,6 @@ export const USER_BADGES = {
     type: 'earned',
     icon: 'crowdsource',
   },
-  PALESTINE: {
-    bit: 16,
-    color: 'linear-gradient(90deg, red, white, green)',
-    icon: 'volunteer_activism',
-  },
   BOT: {
     removable: false,
     bit: 32,

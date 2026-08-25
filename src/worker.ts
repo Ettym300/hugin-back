@@ -27,6 +27,8 @@ import { RemindersRouter } from './routes/reminders/Router';
 import { WebhooksRouter } from './routes/webhooks/Router';
 import { Oauth2Router } from './routes/oauth2/Router';
 import { CdnRouter } from './routes/cdn/Router';
+import { createDevCdnRouter } from './devCdn/devCdnRouter';
+import { ensureDevCdnDirs } from './devCdn/devCdn';
 
 (Date.prototype.toJSON as unknown as (this: Date) => number) = function () {
   return this.getTime();
@@ -53,6 +55,10 @@ const server = http.createServer(app);
 const main = async () => {
   await connectRedis();
   Log.info('Connected to Redis');
+  if (env.DEV_MODE && env.TYPE === 'api') {
+    await ensureDevCdnDirs();
+    Log.info('Dev CDN storage ready (.dev-cdn/)');
+  }
   createIO(server);
 
   prisma.$connect().then(() => {
@@ -75,6 +81,7 @@ app.use(
       maxAge: 31536000,
       includeSubDomains: false,
     },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
   }),
 );
 
@@ -87,6 +94,10 @@ app.use(
 if (env.TYPE === 'api') {
   app.use(express.json({ limit: '20MB' }));
   app.use(express.urlencoded({ extended: false, limit: '20MB' }));
+
+  if (env.DEV_MODE) {
+    app.use(createDevCdnRouter());
+  }
 
   app.use(userIP);
 

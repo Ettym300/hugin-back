@@ -1,5 +1,6 @@
 import { CustomResult } from './CustomResult';
 import env from './env';
+import { generateDevCdnToken, verifyDevCdnUpload } from '../devCdn/devCdn';
 
 export function proxyUrlImageDimensions(url: string): Promise<CustomResult<{ width: number; height: number; animated: boolean }, any>> {
   return new Promise((resolve) => {
@@ -79,6 +80,19 @@ export interface VerifyResponse {
   expireAt?: number;
 }
 export async function verifyUpload(opts: VerifyUploadOpts) {
+  if (env.DEV_MODE) {
+    const [result, error] = await verifyDevCdnUpload({
+      userId: opts.userId,
+      fileId: opts.fileId,
+      groupId: opts.groupId,
+      imageOnly: opts.imageOnly,
+    });
+    if (error || !result) {
+      return [null, error || 'Could not verify upload.'] as const;
+    }
+    return [result, null] as const;
+  }
+
   const url = new URL(env.LOCAL_RUGIN_CDN);
   url.pathname = `/internal/verify-file`;
 
@@ -110,6 +124,10 @@ export interface GenerateTokenResponse {
   token: string;
 }
 export async function generateToken(opts: GenerateTokenOps) {
+  if (env.DEV_MODE) {
+    return generateDevCdnToken(opts);
+  }
+
   const url = new URL(env.LOCAL_RUGIN_CDN);
   url.pathname = `/internal/generate-token`;
 
