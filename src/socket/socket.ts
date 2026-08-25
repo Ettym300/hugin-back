@@ -1,7 +1,9 @@
-// Classic pub/sub adapter: redis-streams-adapter often drops room emits between
-// separate API and WS processes (socket.io#5445). Clients connect to WS; voice
-// join/leave HTTP runs on API and must broadcast via Redis.
+// API and WS are separate EasyPanel containers. Browsers only connect to WS.
+// Voice join/leave HTTP runs on API and must publish through Redis to WS.
+// Using a full Socket.IO Server on API (with no clients) is fragile; the
+// official pattern is @socket.io/redis-emitter on the API process.
 import { createAdapter } from '@socket.io/redis-adapter';
+import { Emitter } from '@socket.io/redis-emitter';
 
 import * as socketIO from 'socket.io';
 import http from 'http';
@@ -10,8 +12,11 @@ import { onConnection } from './events/onConnection';
 import { getServerIds } from '../services/Server';
 import { getFriendIds } from '../services/Friend';
 import { Log } from '../common/Log';
+import env from '../common/env';
 
-let io: socketIO.Server;
+type IO = socketIO.Server | Emitter;
+
+let io: IO;
 
 const membersFetched: Record<string, Set<string>> = {};
 export const hasFetchedMembers = (socketId: string, serverId: string) => membersFetched[socketId]?.has(serverId);
@@ -25,6 +30,14 @@ export const markMembersFetched = (socketId: string, serverId: string) => {
 export const clearMembersFetched = (socketId: string) => delete membersFetched[socketId];
 
 export async function createIO(server?: http.Server) {
+  if (env.TYPE === 'api') {
+    const pubClient = redisClient.duplicate();
+    await pubClient.connect();
+    io = new Emitter(pubClient);
+    Log.info('Socket.IO redis-emitter ready (API publishes to WS)');
+    return;
+  }
+
   const pubClient = redisClient.duplicate();
   const subClient = redisClient.duplicate();
   await Promise.all([pubClient.connect(), subClient.connect()]);
@@ -36,11 +49,11 @@ export async function createIO(server?: http.Server) {
   });
 
   io.on('connection', onConnection);
-  Log.info('Socket.IO ready (redis-adapter)');
+  Log.info('Socket.IO ready (WS + redis-adapter)');
 }
 
 export function getIO() {
-  return io as socketIO.Server;
+  return io as IO;
 }
 
 interface EmitToAllOptions {

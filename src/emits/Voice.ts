@@ -10,20 +10,30 @@ export const emitServerVoiceUserJoined = (
   const io = getIO();
   const payload = voice;
 
+  // channelId: members who joined that channel room
   io.in(channelId).emit(VOICE_USER_JOINED, payload);
-  // Personal room: API and WS are separate processes; joiner must always get the event.
+  // serverId: every online member joins this on auth — reliable across API/WS split
+  if (voice.serverId) {
+    io.in(voice.serverId).emit(VOICE_USER_JOINED, payload);
+  }
+  // Personal room: joiner must always get the event
   io.in(voice.userId).emit(VOICE_USER_JOINED, payload);
 };
 
-export const emitServerVoiceUserLeft = (channelId: string, userId: string) => {
+export const emitServerVoiceUserLeft = (
+  channelId: string,
+  userId: string,
+  serverId?: string
+) => {
   const io = getIO();
   const payload = { userId, channelId };
 
   io.in(channelId).emit(VOICE_USER_LEFT, payload);
+  if (serverId) {
+    io.in(serverId).emit(VOICE_USER_LEFT, payload);
+  }
   io.in(userId).emit(VOICE_USER_LEFT, payload);
 };
-
-
 
 export const emitDMVoiceUserJoined = (
   channel: ChannelCache,

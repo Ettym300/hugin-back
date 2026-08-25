@@ -107,18 +107,20 @@ export const leaveVoiceChannel = async (userId: string, channelId?: string) => {
 
   const [channelCache] = await getChannelForUserCache(leftChannelId, userId);
 
-  if (channelCache?.serverId) {
-    emitServerVoiceUserLeft(leftChannelId, userId);
+  const serverId = channelCache?.serverId || voiceUser?.serverId;
+
+  if (channelCache?.serverId || (!channelCache && serverId)) {
+    emitServerVoiceUserLeft(leftChannelId, userId, serverId);
   } else if (channelCache) {
     emitDMVoiceUserLeft(channelCache, userId);
   } else {
-    // Channel gone / no access — still notify room so peers drop the ghost.
-    emitServerVoiceUserLeft(leftChannelId, userId);
+    // Channel gone / no access — still notify channel + user rooms.
+    emitServerVoiceUserLeft(leftChannelId, userId, serverId);
   }
 
   // If client asked to leave channel A but Redis had them in B, clear both views.
   if (channelId && voiceUser?.channelId && channelId !== voiceUser.channelId) {
-    emitServerVoiceUserLeft(channelId, userId);
+    emitServerVoiceUserLeft(channelId, userId, serverId);
   }
 
   return [true, null] as const;
