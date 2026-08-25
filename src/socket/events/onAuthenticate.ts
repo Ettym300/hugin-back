@@ -18,6 +18,7 @@ import { LastOnlineStatus } from '../../services/User/User';
 import { FriendStatus } from '../../types/Friend';
 import { ReminderSelect, transformReminder } from '../../services/Reminder';
 import { compressObject } from '@src/common/zstd';
+import env from '../../common/env';
 import { decryptToken } from '@src/common/JWT';
 import { userAgentToDeviceType } from '@src/services/User/UserManagement';
 import { markMembersFetched } from '../socket';
@@ -291,7 +292,8 @@ const handleAuthenticate = async (socket: Socket, payload: Payload) => {
       dmStatus: user.account?.dmStatus,
       friendRequestStatus: user.account?.friendRequestStatus,
       lastOnlineStatus: user.lastOnlineStatus,
-      emailConfirmed: user.account?.emailConfirmed,
+      emailConfirmed:
+        !env.EMAIL_CONFIRMATION_ENABLED || !!user.account?.emailConfirmed,
       connections: user.connections,
       notices: user.notices,
       reminders: user.reminders.map(transformReminder),

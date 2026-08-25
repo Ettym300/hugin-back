@@ -18,7 +18,8 @@ async function route(req: Request, res: Response) {
     serverId: req.params.serverId,
   });
   if (error) {
-    return res.status(400).json(error);
+    // Private / unpublished servers are normal — not a client failure.
+    return res.status(200).json(null);
   }
 
   res.json(publicServer);

@@ -33,6 +33,8 @@ import { CdnRouter } from './routes/cdn/Router';
 };
 
 const app = express();
+// JSON APIs + browser fetch: ETag/304 breaks clients that check response.ok.
+app.set('etag', false);
 const server = http.createServer(app);
 
 // Middleware to log request duration

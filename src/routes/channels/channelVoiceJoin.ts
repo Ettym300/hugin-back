@@ -7,6 +7,7 @@ import { body } from 'express-validator';
 import { joinVoiceChannel } from '../../services/Voice';
 import { CHANNEL_PERMISSIONS } from '../../common/Bitwise';
 import { channelPermissions } from '../../middleware/channelPermissions';
+import { isEmailConfirmed } from '../../common/emailConfirmation';
 
 export function channelVoiceJoin(Router: Router) {
   Router.post(
@@ -38,7 +39,7 @@ async function route(req: Request, res: Response) {
     return;
   }
 
-  if (!req.userCache.bot && !req.userCache.account?.emailConfirmed) {
+  if (!req.userCache.bot && !isEmailConfirmed(req.userCache.account?.emailConfirmed)) {
     return res.status(400).json(generateError('You must confirm your email to join voice.'));
   }
 

@@ -527,8 +527,8 @@ export const getChannelNotice = async (where: { channelId?: string; userId?: str
       select: { content: true, updatedAt: true, channelId: true, userId: true },
     })
     .catch(() => {});
-  if (!res) return [null, generateError('Channel notice does not exist.' as const)] as const;
-  return [res, null] as const;
+  // No notice is normal — not an error.
+  return [res || null, null] as const;
 };
 
 export const getChannel = async (channelId: string, requesterId: string) => {

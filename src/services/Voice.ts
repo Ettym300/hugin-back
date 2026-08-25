@@ -12,6 +12,10 @@ import { createMessage } from './Message/Message';
 import { createSystemMessage } from './Message/MessageCreateSystem';
 
 export const generateTurnCredentials = async () => {
+  if (!env.CLOUDFLARE_CALLS_ID || !env.CLOUDFLARE_CALLS_TOKEN) {
+    return null;
+  }
+
   const res = await fetch(`https://rtc.live.cloudflare.com/v1/turn/keys/${env.CLOUDFLARE_CALLS_ID}/credentials/generate`, {
     method: 'POST',
     headers: {
@@ -21,9 +25,9 @@ export const generateTurnCredentials = async () => {
     body: JSON.stringify({
       ttl: 86400,
     }),
-  });
+  }).catch(() => null);
 
-  if (!res.ok) {
+  if (!res?.ok) {
     return null;
   }
 

@@ -26,5 +26,5 @@ async function route(req: Request<unknown, unknown, Body>, res: Response) {
     return res.status(400).json(error);
   }
 
-  res.json({ notice });
+  res.json({ notice: notice ?? null });
 }

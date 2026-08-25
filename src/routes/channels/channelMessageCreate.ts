@@ -25,6 +25,7 @@ import { ServerMemberCache } from '../../cache/ServerMemberCache';
 import env from '../../common/env';
 import { generateId } from '../../common/flakeId';
 import { nerimitySupporterCdnMessage } from '@src/common/nerimitySupporterCdnMessage';
+import { isEmailConfirmed } from '../../common/emailConfirmation';
 
 export function channelMessageCreate(Router: Router) {
   Router.post(
@@ -211,7 +212,7 @@ async function route(req: Request, res: Response) {
 
   const isServerOrDMChannel = req.channelCache.type === ChannelType.DM_TEXT || req.channelCache.type === ChannelType.SERVER_TEXT || req.channelCache.type === ChannelType.CATEGORY;
 
-  if (!req.userCache.application && isServerOrDMChannel && !req.userCache.account?.emailConfirmed) {
+  if (!req.userCache.application && isServerOrDMChannel && !isEmailConfirmed(req.userCache.account?.emailConfirmed)) {
     return res.status(400).json(generateError('You must confirm your email to send messages.'));
   }
 

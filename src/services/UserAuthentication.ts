@@ -7,6 +7,7 @@ import { generateToken } from '../common/JWT';
 import { UserStatus } from '../types/User';
 import { ConnectionProviders } from './UserConnection';
 import { addDeviceWithSession } from './User/UserManagement';
+import env from '../common/env';
 
 interface RegisterOpts {
   email: string;
@@ -37,6 +38,7 @@ export const registerUser = async (opts: RegisterOpts) => {
         id: generateId(),
         email: opts.email,
         password: hashedPassword,
+        emailConfirmed: !env.EMAIL_CONFIRMATION_ENABLED,
         user: {
           create: {
             id: generateId(),

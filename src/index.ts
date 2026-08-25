@@ -31,7 +31,13 @@ if (cluster.isPrimary) {
   let prismaConnected = false;
 
   await connectRedis();
-  await customRedisFlush();
+  // In DEV, rebuilding API/WS on every save must not wipe sessions —
+  // that forces "Invalid token" / Connection Error and blocks voice join.
+  if (!env.DEV_MODE) {
+    await customRedisFlush();
+  } else {
+    Log.info('Redis: skip flush in DEV_MODE (keep sessions)');
+  }
   await createQueueProcessor({
     prefix: env.TYPE,
     redisClient,

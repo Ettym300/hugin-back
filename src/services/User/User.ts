@@ -780,7 +780,13 @@ export async function toggleBadge(userId: string, badgeBit: number) {
     return [null, generateError('Invalid badge bit')] as const;
   }
 
-  const palestine = badgeBit === USER_BADGES.PALESTINE.bit;
+  // Cosmetic overlays + supporter badges are free for everyone (Hugin behavior).
+  const isOverlay = 'overlay' in badge && Boolean(badge.overlay);
+  const isFreeBadge =
+    isOverlay ||
+    badgeBit === USER_BADGES.SUPPORTER.bit ||
+    badgeBit === USER_BADGES.EMO_SUPPORTER.bit ||
+    badgeBit === USER_BADGES.PALESTINE.bit;
 
   if ('removable' in badge) {
     if (!badge.removable) {
@@ -794,23 +800,30 @@ export async function toggleBadge(userId: string, badgeBit: number) {
   if (!user) {
     return [null, generateError('User not found')] as const;
   }
-  let newBadges;
+  let newBadges = user.badges;
 
   const badgeEquipped = hasBit(user.badges, badgeBit);
 
   if (badgeEquipped) {
     newBadges = removeBit(user.badges, badgeBit);
   } else {
-    if (!palestine && !user.inventory.length) {
+    if (!isFreeBadge && !user.inventory.length) {
       return [null, generateError('You do not own this badge.')] as const;
     }
-    newBadges = addBit(user.badges, badgeBit);
+    if (isOverlay) {
+      for (const otherBadge of Object.values(USER_BADGES)) {
+        if ('overlay' in otherBadge && otherBadge.overlay) {
+          newBadges = removeBit(newBadges, otherBadge.bit);
+        }
+      }
+    }
+    newBadges = addBit(newBadges, badgeBit);
   }
 
   await prisma.user.update({
     where: { id: userId },
     data: {
-      ...(palestine
+      ...(isFreeBadge
         ? {
             inventory: {
               upsert: {

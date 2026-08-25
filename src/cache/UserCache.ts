@@ -9,6 +9,7 @@ import { hasBit, USER_BADGES } from '../common/Bitwise';
 import { addDeviceWithSession, DeviceTypeId } from '@src/services/User/UserManagement';
 import { dedupeActivities } from './utils/presenceUtils';
 import { isDeepStrictEqual } from 'node:util';
+import env from '../common/env';
 
 export interface ActivityStatus {
   socketId: string;
@@ -364,7 +365,8 @@ async function storeUserCache(userId: string, beforeCache?: (user: UserCache) =>
       ? {
           account: {
             id: user.account!.id,
-            emailConfirmed: user.account!.emailConfirmed,
+            emailConfirmed:
+              !env.EMAIL_CONFIRMATION_ENABLED || user.account!.emailConfirmed,
           },
         }
       : {
