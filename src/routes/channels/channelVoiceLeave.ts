@@ -12,14 +12,17 @@ export function channelVoiceLeave(Router: Router) {
     rateLimit({
       name: 'channel_voice_leave',
       restrictMS: 20000,
-      requests: 10,
+      requests: 40,
     }),
     route,
   );
 }
 
 async function route(req: Request, res: Response) {
-  const [result, error] = await leaveVoiceChannel(req.userCache.id);
+  const [result, error] = await leaveVoiceChannel(
+    req.userCache.id,
+    req.channelCache.id
+  );
 
   if (error) {
     return res.status(403).json(error);

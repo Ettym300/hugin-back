@@ -33,15 +33,15 @@ export async function getVoiceUserByUserId(
 
 export async function removeVoiceUserByUserId(userId: string) {
   const channelId = await redisClient.get(VOICE_USER_CHANNEL_ID_SET(userId));
-  if (!channelId) return false;
 
   const multi = redisClient.multi();
-
   multi.del(VOICE_USER_CHANNEL_ID_SET(userId));
-  multi.hDel(VOICE_USERS_KEY_HASH(channelId), userId);
+  if (channelId) {
+    multi.hDel(VOICE_USERS_KEY_HASH(channelId), userId);
+  }
 
   await multi.exec();
-  return true;
+  return !!channelId;
 }
 
 export async function addUserToVoice(

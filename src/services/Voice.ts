@@ -95,7 +95,11 @@ export const joinVoiceChannel = async (userId: string, socketId: string, channel
 
 export const leaveVoiceChannel = async (userId: string, channelId?: string) => {
   const voiceUser = await getVoiceUserByUserId(userId);
-  if (!voiceUser) return [null, generateError("You're not in a call.")] as const;
+  // Idempotent: already out (or orphan Redis pointer) must not block rejoin.
+  if (!voiceUser) {
+    await removeVoiceUserByUserId(userId);
+    return [true, null] as const;
+  }
 
   if (channelId && voiceUser.channelId !== channelId) {
     return [null, generateError('You are not in this channel.')] as const;
@@ -103,7 +107,8 @@ export const leaveVoiceChannel = async (userId: string, channelId?: string) => {
   const [channelCache] = await getChannelForUserCache(voiceUser.channelId, userId);
 
   if (!channelCache) {
-    return [null, generateError(`Channel does not exist.`)];
+    await removeVoiceUserByUserId(userId);
+    return [true, null] as const;
   }
   await removeVoiceUserByUserId(userId);
 

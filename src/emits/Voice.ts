@@ -8,8 +8,11 @@ export const emitServerVoiceUserJoined = (
   voice: VoiceCacheFormatted
 ) => {
   const io = getIO();
+  const payload = voice;
 
-  io.in(channelId).emit(VOICE_USER_JOINED, voice);
+  io.in(channelId).emit(VOICE_USER_JOINED, payload);
+  // Personal room: API and WS are separate processes; joiner must always get the event.
+  io.in(voice.userId).emit(VOICE_USER_JOINED, payload);
 };
 
 export const emitServerVoiceUserLeft = (channelId: string, userId: string) => {
@@ -17,8 +20,6 @@ export const emitServerVoiceUserLeft = (channelId: string, userId: string) => {
   const payload = { userId, channelId };
 
   io.in(channelId).emit(VOICE_USER_LEFT, payload);
-  // Also emit to the leaver's personal room so their UI always clears,
-  // even if they are not currently subscribed to the channel room.
   io.in(userId).emit(VOICE_USER_LEFT, payload);
 };
 

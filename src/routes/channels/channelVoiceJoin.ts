@@ -20,7 +20,7 @@ export function channelVoiceJoin(Router: Router) {
     rateLimit({
       name: 'channel_voice_join',
       restrictMS: 20000,
-      requests: 10,
+      requests: 40,
     }),
     body('socketId').not().isEmpty().withMessage('socketId is required').isString().withMessage('socketId must be a string').isLength({ min: 3, max: 320 }).withMessage('socketId must be between 3 and 320 characters long.'),
     route,
