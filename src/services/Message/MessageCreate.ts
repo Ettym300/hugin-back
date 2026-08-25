@@ -17,7 +17,7 @@ import { replaceBadWords } from '../../common/badWords';
 import { zip } from '../../common/zip';
 import { prepareMessageForDatabase } from './prepareMessageForDatabase';
 import { getServerMemberCache, ServerMemberCache } from '@src/cache/ServerMemberCache';
-import { proxyUrlImageDimensions } from '@src/common/nerimityCDN';
+import { proxyUrlImageDimensions } from '@src/common/ruginCDN';
 import { error } from 'console';
 
 export interface SendMessageOptions {

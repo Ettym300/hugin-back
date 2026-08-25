@@ -1,11 +1,11 @@
 import { HTMLElement, parse } from 'node-html-parser';
-import { proxyUrlImageDimensions } from './nerimityCDN';
+import { proxyUrlImageDimensions } from './ruginCDN';
 import env from './env';
 import { signatureHeaders } from 'web-bot-auth';
 import { signerFromJWK } from 'web-bot-auth/crypto';
 
-const PRIVATE_KEY = env.NERIMITY_EMBED_BOT_PRIVATE_KEY;
-const USER_AGENT = 'NerimityBot/1.0 (+https://nerimity.com/bot)';
+const PRIVATE_KEY = env.RUGIN_EMBED_BOT_PRIVATE_KEY;
+const USER_AGENT = 'RuginBot/1.0 (+https://rugin.com/bot)';
 
 const mapper = new Map(
   Object.entries({

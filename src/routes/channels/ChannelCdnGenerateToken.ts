@@ -1,13 +1,13 @@
 import { Request, Response, Router } from 'express';
 import { authenticate } from '../../middleware/authenticate';
 import { rateLimit } from '../../middleware/rateLimit';
-import { generateToken } from '@src/common/nerimityCDN';
+import { generateToken } from '@src/common/ruginCDN';
 import { generateError } from '@src/common/errorHandler';
 import { channelVerification } from '@src/middleware/channelVerification';
 import { hasBit, USER_BADGES } from '@src/common/Bitwise';
 import { ServerCache } from '@src/cache/ServerCache';
 import { ChannelType } from '@src/types/Channel';
-import { nerimitySupporterCdnMessage } from '@src/common/nerimitySupporterCdnMessage';
+import { ruginSupporterCdnMessage } from '@src/common/ruginSupporterCdnMessage';
 
 export function ChannelCdnGenerateToken(Router: Router) {
   Router.post(
@@ -29,12 +29,12 @@ async function route(req: Request, res: Response) {
   const isServerNotPublicAndNotSupporter = req.serverCache && !isServerPublic(req.serverCache) && !isSupporterOrModerator(req.userCache);
 
   if (!isMod && isServerNotPublicAndNotSupporter) {
-    return res.status(400).json(generateError(nerimitySupporterCdnMessage));
+    return res.status(400).json(generateError(ruginSupporterCdnMessage));
   }
   const isPrivateChannelAndNotSupporter = req.channelCache.type === ChannelType.SERVER_TEXT && !req.channelCache.canBePublic && !isSupporterOrModerator(req.userCache);
 
   if (!isMod && isPrivateChannelAndNotSupporter) {
-    return res.status(400).json(generateError(nerimitySupporterCdnMessage));
+    return res.status(400).json(generateError(ruginSupporterCdnMessage));
   }
 
   const [genRes, error] = await generateToken({

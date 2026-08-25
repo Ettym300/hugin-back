@@ -7,7 +7,7 @@ import { generateId } from '../../common/flakeId';
 import { generateError } from '../../common/errorHandler';
 import { Message, Prisma } from '@src/generated/prisma/client';
 import { addToObjectIfExists } from '../../common/addToObjectIfExists';
-import { deleteFile } from '../../common/nerimityCDN';
+import { deleteFile } from '../../common/ruginCDN';
 import { getOGTags } from '../../common/OGTags';
 import { ServerCache } from '../../cache/ServerCache';
 import { NotificationPingMode } from '../User/User';
@@ -35,7 +35,7 @@ interface GetSingleMessageByChannelIdOpts {
 }
 
 export const AttachmentProviders = {
-  Local: 'local', // nerimity cdn
+  Local: 'local', // rugin cdn
   GoogleDrive: 'google_drive',
 } as const;
 

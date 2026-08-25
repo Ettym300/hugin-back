@@ -17,7 +17,7 @@ import { ShadowBan } from '@src/generated/prisma/client';
 import { encrypt } from '../../common/encryption';
 import path from 'path';
 import { emitServerFolderCreated, emitServerFolderUpdated, emitServerOrderUpdated } from '../../emits/Server';
-import { deleteImageBatch } from '@src/common/nerimityCDN';
+import { deleteImageBatch } from '@src/common/ruginCDN';
 import geoip from 'geoip-lite';
 import { checkUserPassword } from '../UserAuthentication';
 

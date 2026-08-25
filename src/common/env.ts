@@ -18,7 +18,7 @@ const origin = (): string | string[] => {
 export default {
   DEV_MODE: process.env.DEV_MODE === 'true',
   API_PORT: parseInt(process.env.API_PORT as string),
-  NERIMITY_EMBED_BOT_PRIVATE_KEY: JSON.parse((process.env.NERIMITY_EMBED_BOT_PRIVATE_KEY as string) || 'null') as JsonWebKey | null,
+  RUGIN_EMBED_BOT_PRIVATE_KEY: JSON.parse((process.env.RUGIN_EMBED_BOT_PRIVATE_KEY as string) || 'null') as JsonWebKey | null,
   WS_PORT: parseInt(process.env.WS_PORT as string),
   JWT_SECRET: process.env.JWT_SECRET as string,
   CONNECTIONS_SECRET: process.env.CONNECTIONS_SECRET as string,
@@ -31,9 +31,9 @@ export default {
   REDIS_PASS: process.env.REDIS_PASS as string,
   ORIGIN: origin(),
   CLIENT_URL: process.env.CLIENT_URL as string,
-  NERIMITY_CDN: process.env.NERIMITY_CDN as string,
-  LOCAL_NERIMITY_CDN: process.env.LOCAL_NERIMITY_CDN as string,
-  NERIMITY_CDN_SECRET: process.env.NERIMITY_CDN_SECRET as string,
+  RUGIN_CDN: process.env.RUGIN_CDN as string,
+  LOCAL_RUGIN_CDN: process.env.LOCAL_RUGIN_CDN as string,
+  RUGIN_CDN_SECRET: process.env.RUGIN_CDN_SECRET as string,
 
   MAX_CHANNELS_PER_SERVER: parseInt(process.env.MAX_CHANNELS_PER_SERVER || '0') as number,
   MAX_INVITES_PER_SERVER: parseInt(process.env.MAX_INVITES_PER_SERVER || '0') as number,
@@ -59,4 +59,9 @@ export default {
   EXTERNAL_EMBED_SECRET: process.env.EXTERNAL_EMBED_SECRET as string,
   // Off by default for local/self-host without SMTP.
   EMAIL_CONFIRMATION_ENABLED: process.env.EMAIL_CONFIRMATION_ENABLED === 'true',
+
+  // LiveKit SFU — empty = mesh WebRTC only.
+  LIVEKIT_API_KEY: process.env.LIVEKIT_API_KEY as string | undefined,
+  LIVEKIT_API_SECRET: process.env.LIVEKIT_API_SECRET as string | undefined,
+  LIVEKIT_PUBLIC_WS_URL: process.env.LIVEKIT_PUBLIC_WS_URL as string | undefined,
 };

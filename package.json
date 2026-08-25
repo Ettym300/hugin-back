@@ -1,5 +1,5 @@
 {
-  "name": "nerimity-server",
+  "name": "rugin-server",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -75,6 +75,7 @@
     "google-auth-library": "^10.9.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
+    "livekit-server-sdk": "^2.18.0",
     "node-html-parser": "^7.1.0",
     "node-schedule": "^2.1.1",
     "nodemailer": "^8.0.11",

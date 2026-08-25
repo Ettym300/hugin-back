@@ -3,10 +3,10 @@ import env from './env';
 
 export function proxyUrlImageDimensions(url: string): Promise<CustomResult<{ width: number; height: number; animated: boolean }, any>> {
   return new Promise((resolve) => {
-    fetch(env.LOCAL_NERIMITY_CDN + `proxy-dimensions?url=${encodeURIComponent(url)}`, {
+    fetch(env.LOCAL_RUGIN_CDN + `proxy-dimensions?url=${encodeURIComponent(url)}`, {
       method: 'GET',
       headers: {
-        Authorization: env.NERIMITY_CDN_SECRET,
+        Authorization: env.RUGIN_CDN_SECRET,
       },
     })
       .then(async (res) => {
@@ -18,11 +18,11 @@ export function proxyUrlImageDimensions(url: string): Promise<CustomResult<{ wid
 }
 
 export async function deleteFile(path: string) {
-  return await fetch(env.LOCAL_NERIMITY_CDN + 'internal', {
+  return await fetch(env.LOCAL_RUGIN_CDN + 'internal', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.RUGIN_CDN_SECRET,
     },
     body: JSON.stringify({ path }),
   }).catch((err) => {
@@ -33,10 +33,10 @@ export async function deleteFile(path: string) {
 // deletes 1000 images from a channel.
 export async function deleteChannelAttachmentBatch(channelId: string): Promise<CustomResult<{ count?: number; status: boolean }, { type: string; error?: string }>> {
   return new Promise((resolve) => {
-    fetch(env.LOCAL_NERIMITY_CDN + `internal/attachments/${channelId}/batch`, {
+    fetch(env.LOCAL_RUGIN_CDN + `internal/attachments/${channelId}/batch`, {
       method: 'DELETE',
       headers: {
-        Authorization: env.NERIMITY_CDN_SECRET,
+        Authorization: env.RUGIN_CDN_SECRET,
       },
     })
       .then(async (res) => {
@@ -48,11 +48,11 @@ export async function deleteChannelAttachmentBatch(channelId: string): Promise<C
 }
 
 export async function deleteImageBatch(paths: string[]) {
-  return await fetch(env.LOCAL_NERIMITY_CDN + 'internal/batch', {
+  return await fetch(env.LOCAL_RUGIN_CDN + 'internal/batch', {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.RUGIN_CDN_SECRET,
     },
     body: JSON.stringify({ paths }),
   }).catch((e) => {});
@@ -79,13 +79,13 @@ export interface VerifyResponse {
   expireAt?: number;
 }
 export async function verifyUpload(opts: VerifyUploadOpts) {
-  const url = new URL(env.LOCAL_NERIMITY_CDN);
+  const url = new URL(env.LOCAL_RUGIN_CDN);
   url.pathname = `/internal/verify-file`;
 
   return await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.RUGIN_CDN_SECRET,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -110,13 +110,13 @@ export interface GenerateTokenResponse {
   token: string;
 }
 export async function generateToken(opts: GenerateTokenOps) {
-  const url = new URL(env.LOCAL_NERIMITY_CDN);
+  const url = new URL(env.LOCAL_RUGIN_CDN);
   url.pathname = `/internal/generate-token`;
 
   return await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: env.NERIMITY_CDN_SECRET,
+      Authorization: env.RUGIN_CDN_SECRET,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({

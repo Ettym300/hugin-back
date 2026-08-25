@@ -1,0 +1,1 @@
+export const ruginSupporterCdnMessage = 'To ensure a safe and verified environment, sending attachments in private channels requires a [Rugin supporter badge](https://rugin.com/app/settings/badges).';

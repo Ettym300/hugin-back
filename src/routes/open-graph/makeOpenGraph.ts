@@ -24,7 +24,7 @@ export const makeOpenGraph = (opts: Options) => {
   const imageUrl = opts.imageUrl ? escapeHtml(opts.imageUrl) : undefined;
   const color = escapeHtml(opts.color || '#4c93ff');
 
-  const siteName = `<meta content="Nerimity" property="og:site_name" />`;
+  const siteName = `<meta content="Rugin" property="og:site_name" />`;
   const type = `<meta content="article" property="og:type" />`;
   const urlTag = `<meta content="${url}" property="og:url" />`;
   const titleTag = `<meta content="${title}" property="og:title" />`;
@@ -40,7 +40,7 @@ export const makeOpenGraph = (opts: Options) => {
   const htmlDescription = `<meta name="description" content="${description}">`;
 
   const largeImage = opts.largeImage ? `<meta name="twitter:card" content="summary_large_image">` : '';
-  const twitterDomain = `<meta name="twitter:domain" content="https://nerimity.com">`;
+  const twitterDomain = `<meta name="twitter:domain" content="https://rugin.com">`;
   const twitterUrl = `<meta name="twitter:url" content="${url}">`;
   const twitterDescription = `<meta name="twitter:description" content="${description}">`;
   const twitterTitle = `<meta name="twitter:title" content="${title}">`;

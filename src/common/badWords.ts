@@ -21,7 +21,7 @@ const badWords2AnywhereRegex = new RegExp(BadWords2.join('|'), 'gi');
 
 const badWordsWholeRegex = new RegExp(BadWords.map((w) => `^${w}$`).join('|'), 'i');
 
-const goodWords = ['I love myself', 'I love you', "I'm a good person!", 'uwu <3', "You're nice :)", 'Nerimity is Awesome!', 'I love Positivity!', 'Keep yourself safe 💖', 'I will restore your faith in humanity 😇', 'This venerable one loves you', "I'm feeling a little insecure today 👉👈🥺", 'I love [@:s] 😊', '🥰', '||Ty for clicking! ^^||'];
+const goodWords = ['I love myself', 'I love you', "I'm a good person!", 'uwu <3', "You're nice :)", 'Rugin is Awesome!', 'I love Positivity!', 'Keep yourself safe 💖', 'I will restore your faith in humanity 😇', 'This venerable one loves you', "I'm feeling a little insecure today 👉👈🥺", 'I love [@:s] 😊', '🥰', '||Ty for clicking! ^^||'];
 
 export const replaceBadWords = (message: string) => {
   const normalizedMessage = anyAscii(message);

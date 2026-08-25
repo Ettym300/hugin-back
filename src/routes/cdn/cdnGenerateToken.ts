@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { authenticate } from '../../middleware/authenticate';
 import { rateLimit } from '../../middleware/rateLimit';
-import { generateToken } from '@src/common/nerimityCDN';
+import { generateToken } from '@src/common/ruginCDN';
 import { generateError } from '@src/common/errorHandler';
 
 export function cdnGenerateToken(Router: Router) {

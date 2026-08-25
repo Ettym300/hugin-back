@@ -9,7 +9,7 @@ import { MessageType } from '../../types/Message';
 import { AttachmentProviders, createMessage } from '../../services/Message/Message';
 import { memberHasRolePermission, memberHasRolePermissionMiddleware } from '../../middleware/memberHasRolePermission';
 import { rateLimit } from '../../middleware/rateLimit';
-import { deleteFile, verifyUpload } from '../../common/nerimityCDN';
+import { deleteFile, verifyUpload } from '../../common/ruginCDN';
 import { ChannelType, TextChannelTypes } from '../../types/Channel';
 import { Attachment } from '@src/generated/prisma/client';
 import { dateToDateTime, prisma } from '../../common/database';
@@ -24,7 +24,7 @@ import { checkAndUpdateRateLimit } from '../../cache/RateLimitCache';
 import { ServerMemberCache } from '../../cache/ServerMemberCache';
 import env from '../../common/env';
 import { generateId } from '../../common/flakeId';
-import { nerimitySupporterCdnMessage } from '@src/common/nerimitySupporterCdnMessage';
+import { ruginSupporterCdnMessage } from '@src/common/ruginSupporterCdnMessage';
 import { isEmailConfirmed } from '../../common/emailConfirmation';
 
 export function channelMessageCreate(Router: Router) {
@@ -60,7 +60,7 @@ export function channelMessageCreate(Router: Router) {
     body('googleDriveAttachment.id').optional(true).isString().withMessage('googleDriveAttachment id must be a string!').isLength({ min: 1, max: 255 }).withMessage('googleDriveAttachment id length must be between 1 and 255 characters.'),
 
     body('googleDriveAttachment.mime').optional(true).isString().withMessage('googleDriveAttachment mime must be a string!').isLength({ min: 1, max: 255 }).withMessage('googleDriveAttachment mime length must be between 1 and 255 characters.'),
-    body('nerimityCdnFileId').optional(true).isString().withMessage('nerimityCdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('nerimityCdnFileId length must be between 1 and 255 characters.'),
+    body('ruginCdnFileId').optional(true).isString().withMessage('ruginCdnFileId id must be a string!').isLength({ min: 1, max: 255 }).withMessage('ruginCdnFileId length must be between 1 and 255 characters.'),
 
     body('buttons')
       .optional(true)
@@ -123,7 +123,7 @@ interface Body {
   replyToMessageIds?: string[];
   mentionReplies?: boolean;
   silent?: boolean;
-  nerimityCdnFileId?: string;
+  ruginCdnFileId?: string;
   googleDriveAttachment?: {
     id: string;
     mime: string;
@@ -182,25 +182,25 @@ async function route(req: Request, res: Response) {
     }
   }
 
-  const hasAttachment = body.googleDriveAttachment || body.nerimityCdnFileId;
+  const hasAttachment = body.googleDriveAttachment || body.ruginCdnFileId;
 
   if (hasAttachment) {
     if (!isEmailConfirmed(req.userCache) && !req.userCache.bot) {
       return res.status(400).json(generateError('You must confirm your email to send attachment messages.'));
     }
 
-    if (body.nerimityCdnFileId) {
+    if (body.ruginCdnFileId) {
       const isMod = hasBit(req.userCache.badges, USER_BADGES.MOD.bit);
 
       const isServerNotPublicAndNotSupporter = req.serverCache && !isServerPublic(req.serverCache) && !isSupporterOrModerator(req.userCache);
 
       if (!isMod && isServerNotPublicAndNotSupporter) {
-        return res.status(400).json(generateError(nerimitySupporterCdnMessage));
+        return res.status(400).json(generateError(ruginSupporterCdnMessage));
       }
       const isPrivateChannelAndNotSupporter = req.channelCache.type === ChannelType.SERVER_TEXT && !req.channelCache.canBePublic && !isSupporterOrModerator(req.userCache);
 
       if (!isMod && isPrivateChannelAndNotSupporter) {
-        return res.status(400).json(generateError(nerimitySupporterCdnMessage));
+        return res.status(400).json(generateError(ruginSupporterCdnMessage));
       }
     }
   }
@@ -251,7 +251,7 @@ async function route(req: Request, res: Response) {
     return res.status(400).json(generateError('You cannot send messages in this channel.'));
   }
 
-  if (!body.content?.trim() && !body.nerimityCdnFileId && !body.googleDriveAttachment && !body.htmlEmbed) {
+  if (!body.content?.trim() && !body.ruginCdnFileId && !body.googleDriveAttachment && !body.htmlEmbed) {
     return res.status(400).json(generateError('content or attachment is required.'));
   }
 
@@ -265,9 +265,9 @@ async function route(req: Request, res: Response) {
 
   let attachment: Partial<Attachment> | undefined = undefined;
 
-  if (body.nerimityCdnFileId) {
+  if (body.ruginCdnFileId) {
     const [uploadedFile, err] = await verifyUpload({
-      fileId: body.nerimityCdnFileId,
+      fileId: body.ruginCdnFileId,
       groupId: req.channelCache.id,
       userId: req.userCache.id,
     });

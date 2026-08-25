@@ -11,6 +11,7 @@ import { channelMessageReactedUsers } from './channelMessageReactions';
 import { channelDMClose } from './channelDmClose';
 import { channelVoiceJoin } from './channelVoiceJoin';
 import { channelVoiceLeave } from './channelVoiceLeave';
+import { channelVoiceLiveKit } from './channelVoiceLiveKit';
 import { channelNoticeGet } from './channelNoticeGet';
 import { channelMessageButtonClick } from './channelMessageButtonClick';
 import { channelMessageButtonClickCallback } from './channelMessageButtonClickCallback';
@@ -43,6 +44,7 @@ channelMessagesSearch(ChannelsRouter);
 channelMessagesSingle(ChannelsRouter);
 channelVoiceJoin(ChannelsRouter);
 channelVoiceLeave(ChannelsRouter);
+channelVoiceLiveKit(ChannelsRouter);
 channelAttachments(ChannelsRouter);
 
 channelMessageCreate(ChannelsRouter);

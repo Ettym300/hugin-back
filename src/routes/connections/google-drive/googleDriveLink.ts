@@ -11,7 +11,7 @@ import { googleOAuth2Client } from '../../../common/GoogleOAuth2Client';
 export function googleDriveLink(Router: Router) {
   Router.post(
     '/connections/google-drive/link-account',
-    body('nerimityToken').not().isEmpty().withMessage('nerimityToken is required.').isString().withMessage('nerimityToken must be a string!'),
+    body('ruginToken').not().isEmpty().withMessage('ruginToken is required.').isString().withMessage('ruginToken must be a string!'),
     body('code').not().isEmpty().withMessage('code is required.').isString().withMessage('code must be a string!'),
     rateLimit({
       name: 'google-d-link-account',
@@ -24,14 +24,14 @@ export function googleDriveLink(Router: Router) {
 }
 
 interface Body {
-  nerimityToken: string;
+  ruginToken: string;
   code: string;
 }
 
 async function route(req: Request, res: Response) {
   const body: Body = req.body;
 
-  const token = await verifyAsync(body.nerimityToken).catch(() => {});
+  const token = await verifyAsync(body.ruginToken).catch(() => {});
 
   if (!token) {
     return res.status(400).json(generateError('Token expired. Please try again.'));

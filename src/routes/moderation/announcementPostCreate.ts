@@ -58,7 +58,7 @@ async function route(req: Request<{ postId: string }, unknown, Body>, res: Respo
 
 // ## Changes To Terms And Conditions
 // Please review these changes in the link below:
-// https://nerimity.com/terms-and-conditions
+// https://rugin.com/terms-and-conditions
 // ### Noteworthy Changes:
 // This is a hobby passion project and I reserve the right to suspend anyone for any reason.
 // Everyone must make their servers and the content inside it in English.

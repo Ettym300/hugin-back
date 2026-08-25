@@ -10,7 +10,7 @@ import { generateToken } from '../common/JWT';
 import { addDeviceWithSession, deleteAccount, disconnectSockets, removeSessionsByUserId } from './User/UserManagement';
 import { removeUserCacheByUserIds } from '../cache/UserCache';
 import { generateOauth2Token } from './Oauth2';
-import * as nerimityCDN from '../common/nerimityCDN';
+import * as ruginCDN from '../common/ruginCDN';
 
 export async function createApplication(requesterAccountId: string) {
   const count = await prisma.application.count({
@@ -287,7 +287,7 @@ export const updateBot = async (opts: UpdateBotProps) => {
       if (opts.banner === null && user.banner) {
         pathsToDelete.push(user.banner);
       }
-      await nerimityCDN.deleteImageBatch(pathsToDelete);
+      await ruginCDN.deleteImageBatch(pathsToDelete);
     }
   }
 

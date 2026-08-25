@@ -7,7 +7,7 @@ import { memberHasRolePermissionMiddleware } from '../../middleware/memberHasRol
 import { rateLimit } from '../../middleware/rateLimit';
 import { serverMemberVerification } from '../../middleware/serverMemberVerification';
 import { addServerEmoji } from '../../services/Server';
-import { verifyUpload } from '../../common/nerimityCDN';
+import { verifyUpload } from '../../common/ruginCDN';
 
 export function serverEmojiAdd(Router: Router) {
   Router.post(

@@ -8,7 +8,7 @@ import { authenticate } from '../../middleware/authenticate';
 import { isModMiddleware } from './isModMiddleware';
 import { ModAuditLogType } from '../../common/ModAuditLog';
 import { checkUserPassword } from '../../services/UserAuthentication';
-import { deleteFile } from '../../common/nerimityCDN';
+import { deleteFile } from '../../common/ruginCDN';
 
 export function postBatchSuspend(Router: Router) {
   Router.post(

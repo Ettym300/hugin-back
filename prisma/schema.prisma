@@ -1081,7 +1081,7 @@ model ScheduleAccountContentDelete {
 
 }
 
-// Only used when Nerimity mod deletes a server.
+// Only used when Rugin mod deletes a server.
 model ScheduleServerDelete {
   @@map("schedule_server_delete")
   serverId           String   @unique

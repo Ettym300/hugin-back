@@ -24,7 +24,7 @@ import { LastOnlineStatus } from './User/User';
 import { addServerAuditLog, AuditLogType, logServerDelete, logServerOwnershipUpdate, logServerUserBanned, logServerUserKicked, logServerUserMuted, logServerUserUnbanned, logServerUserUnmuted } from './AuditLog';
 import { removeManyWebhookCache } from '../cache/WebhookCache';
 import { createSystemMessage } from './Message/MessageCreateSystem';
-import * as nerimityCDN from '../common/nerimityCDN';
+import * as ruginCDN from '../common/ruginCDN';
 import { leaveVoiceChannel } from './Voice';
 
 const ServerMemberWithLastOnlineDetails = {
@@ -806,7 +806,7 @@ export const updateServer = async (serverId: string, update: UpdateServerOptions
       if (update.banner === null && server.banner) {
         pathsToDelete.push(server.banner);
       }
-      await nerimityCDN.deleteImageBatch(pathsToDelete);
+      await ruginCDN.deleteImageBatch(pathsToDelete);
     }
   }
 
@@ -958,7 +958,7 @@ export const deleteServerEmoji = async (serverId: string, emojiId: string) => {
   if (!emoji) return [null, 'Emoji not found.'] as const;
 
   await prisma.customEmoji.delete({ where: { id: emoji.id } });
-  // await nerimityCDN.deleteImage('emojis/' + emoji.id + (emoji.gif ? '.gif' : '.webp'));
+  // await ruginCDN.deleteImage('emojis/' + emoji.id + (emoji.gif ? '.gif' : '.webp'));
   emitServerEmojiRemove(serverId, emojiId);
   return [true, null] as const;
 };

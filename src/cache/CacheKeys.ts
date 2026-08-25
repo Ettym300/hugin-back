@@ -1,4 +1,4 @@
-const PREFIX = 'NERIMITY_';
+const PREFIX = 'RUGIN_';
 
 // WS KEYS
 export const CONNECTED_SOCKET_ID_KEY_SET = (userId: string) => `${PREFIX}SOCKET_USER_CONNECTED:${userId}` as const;
