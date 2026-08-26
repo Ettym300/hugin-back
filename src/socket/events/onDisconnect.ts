@@ -4,7 +4,7 @@ import { dateToDateTime, prisma } from '../../common/database';
 import { emitUserPresenceUpdate } from '../../emits/User';
 import { UserStatus } from '../../types/User';
 import { getVoiceUserByUserId } from '../../cache/VoiceCache';
-import { leaveVoiceChannel } from '../../services/Voice';
+import { scheduleVoiceLeaveOnDisconnect } from '../../services/Voice';
 import { LastOnlineStatus } from '../../services/User/User';
 import { clearMembersFetched } from '../socket';
 
@@ -56,6 +56,8 @@ const handleDisconnect = async (socket: Socket) => {
 
   const voice = await getVoiceUserByUserId(userId);
   if (voice?.socketId === socket.id) {
-    leaveVoiceChannel(userId);
+    // Grace period so brief WS/proxy flaps do not emit VOICE_USER_LEFT
+    // (client used to disconnect LiveKit on every LEFT for self).
+    scheduleVoiceLeaveOnDisconnect(userId, socket.id);
   }
 };

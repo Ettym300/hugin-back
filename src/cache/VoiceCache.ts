@@ -62,6 +62,26 @@ export async function addUserToVoice(
   };
 }
 
+/** Soft WS reconnect: keep the same voice presence, only refresh socketId. */
+export async function updateVoiceUserSocketId(
+  userId: string,
+  socketId: string
+): Promise<(VoiceCache & VoiceCacheFormatted) | null> {
+  const existing = await getVoiceUserByUserId(userId);
+  if (!existing) return null;
+
+  const data: VoiceCache = {
+    socketId,
+    serverId: existing.serverId,
+  };
+  await redisClient.hSet(
+    VOICE_USERS_KEY_HASH(existing.channelId),
+    userId,
+    JSON.stringify(data)
+  );
+  return { ...existing, socketId };
+}
+
 export async function countVoiceUsersInChannel(channelId: string) {
   return redisClient.hLen(VOICE_USERS_KEY_HASH(channelId));
 }

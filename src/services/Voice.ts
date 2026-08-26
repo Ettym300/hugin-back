@@ -1,6 +1,12 @@
 import { getChannelForUserCache } from '../cache/ChannelCache';
 import { getUserIdBySocketId } from '../cache/UserCache';
-import { addUserToVoice, countVoiceUsersInChannel, getVoiceUserByUserId, isUserInVoice, removeVoiceUserByUserId } from '../cache/VoiceCache';
+import {
+  addUserToVoice,
+  countVoiceUsersInChannel,
+  getVoiceUserByUserId,
+  removeVoiceUserByUserId,
+  updateVoiceUserSocketId,
+} from '../cache/VoiceCache';
 import { prisma } from '../common/database';
 import env from '../common/env';
 import { generateError } from '../common/errorHandler';
@@ -10,6 +16,32 @@ import { FriendStatus } from '../types/Friend';
 import { MessageType } from '../types/Message';
 import { createMessage } from './Message/Message';
 import { createSystemMessage } from './Message/MessageCreateSystem';
+
+/** Brief WS flaps should not kick the user out of voice / LiveKit. */
+const VOICE_DISCONNECT_GRACE_MS = 20_000;
+const pendingVoiceLeaves = new Map<string, ReturnType<typeof setTimeout>>();
+
+export function cancelPendingVoiceLeave(userId: string) {
+  const timer = pendingVoiceLeaves.get(userId);
+  if (!timer) return;
+  clearTimeout(timer);
+  pendingVoiceLeaves.delete(userId);
+}
+
+/** Leave voice only if the user has not re-joined with a new socket within the grace window. */
+export function scheduleVoiceLeaveOnDisconnect(userId: string, socketId: string) {
+  cancelPendingVoiceLeave(userId);
+  const timer = setTimeout(() => {
+    pendingVoiceLeaves.delete(userId);
+    void (async () => {
+      const voice = await getVoiceUserByUserId(userId);
+      if (voice?.socketId === socketId) {
+        await leaveVoiceChannel(userId);
+      }
+    })();
+  }, VOICE_DISCONNECT_GRACE_MS);
+  pendingVoiceLeaves.set(userId, timer);
+}
 
 export const generateTurnCredentials = async () => {
   if (!env.CLOUDFLARE_CALLS_ID || !env.CLOUDFLARE_CALLS_TOKEN) {
@@ -41,8 +73,16 @@ export const joinVoiceChannel = async (userId: string, socketId: string, channel
     return [null, generateError('Invalid socketId or not connected to WebSocket.')] as const;
   }
 
-  const isAlreadyInVoice = await isUserInVoice(userId);
-  if (isAlreadyInVoice) {
+  const existingVoice = await getVoiceUserByUserId(userId);
+  // Same channel after WS reconnect: only refresh socketId — do NOT emit LEFT/JOINED
+  // (that was tearing down LiveKit via setCurrentChannelId(null) on the client).
+  if (existingVoice?.channelId === channelId) {
+    cancelPendingVoiceLeave(userId);
+    await updateVoiceUserSocketId(userId, socketId);
+    return [true, null] as const;
+  }
+
+  if (existingVoice) {
     await leaveVoiceChannel(userId);
   }
 
@@ -98,6 +138,7 @@ export const joinVoiceChannel = async (userId: string, socketId: string, channel
 };
 
 export const leaveVoiceChannel = async (userId: string, channelId?: string) => {
+  cancelPendingVoiceLeave(userId);
   const voiceUser = await getVoiceUserByUserId(userId);
   if (!voiceUser) return [null, generateError("You're not in a call.")] as const;
 
