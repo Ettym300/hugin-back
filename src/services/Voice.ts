@@ -2,7 +2,6 @@ import { getChannelForUserCache } from '../cache/ChannelCache';
 import { getUserIdBySocketId } from '../cache/UserCache';
 import {
   addUserToVoice,
-  countVoiceUsersInChannel,
   getVoiceUserByUserId,
   removeVoiceUserByUserId,
   updateVoiceUserSocketId,
@@ -13,9 +12,6 @@ import { generateError } from '../common/errorHandler';
 import { emitServerVoiceUserLeft, emitServerVoiceUserJoined, emitDMVoiceUserLeft, emitDMVoiceUserJoined } from '../emits/Voice';
 import { ChannelType, TextChannelTypes } from '../types/Channel';
 import { FriendStatus } from '../types/Friend';
-import { MessageType } from '../types/Message';
-import { createMessage } from './Message/Message';
-import { createSystemMessage } from './Message/MessageCreateSystem';
 
 /** Brief WS flaps should not kick the user out of voice / LiveKit. */
 const VOICE_DISCONNECT_GRACE_MS = 20_000;
@@ -110,17 +106,6 @@ export const joinVoiceChannel = async (userId: string, socketId: string, channel
     if (isBlocked) {
       return [null, generateError('Cannot join voice channel.')];
     }
-  }
-
-  const count = await countVoiceUsersInChannel(channelId);
-
-  if (count === 0) {
-    createSystemMessage({
-      type: MessageType.CALL_STARTED,
-      channelId,
-      userId,
-      serverId,
-    });
   }
 
   const voice = await addUserToVoice(channelId, userId, {
