@@ -7,8 +7,21 @@ interface TurnstileResponse {
   hostname?: string;
 }
 
+function allowedTurnstileHostnames(): string[] {
+  const hosts = new Set<string>(['rugin.com', 'www.rugin.com']);
+  if (env.CLIENT_URL) {
+    try {
+      hosts.add(new URL(env.CLIENT_URL).hostname);
+    } catch {
+      /* ignore invalid CLIENT_URL */
+    }
+  }
+  return [...hosts];
+}
+
 export async function turnstileVerify(token: string, remoteIp?: string): Promise<boolean> {
-  if (env.DEV_MODE) return true;
+  // Match frontend: no widget when DEV_MODE or Turnstile is not configured.
+  if (env.DEV_MODE || !env.TURNSTILE_SECRET) return true;
 
   const params = new URLSearchParams();
   params.append('secret', env.TURNSTILE_SECRET);
@@ -29,7 +42,7 @@ export async function turnstileVerify(token: string, remoteIp?: string): Promise
 
     const json = (await res.json()) as TurnstileResponse;
 
-    if (json.hostname !== 'rugin.com') {
+    if (json.hostname && !allowedTurnstileHostnames().includes(json.hostname)) {
       return false;
     }
 
