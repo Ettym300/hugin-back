@@ -56,7 +56,10 @@ async function route(req: Request, res: Response) {
     return res.status(400).json(generateError('Invalid code.'));
   }
 
-  const [connection, error] = await addGoogleDriveConnection(uId, refreshToken);
+  const [connection, error] = await addGoogleDriveConnection(uId, refreshToken).catch((e) => {
+    console.error('addGoogleDriveConnection failed:', e);
+    return [null, generateError('Failed to save the connection. Please try again.')] as const;
+  });
 
   if (error) {
     return res.status(400).json(error);

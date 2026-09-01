@@ -71,7 +71,10 @@ async function route(req: Request, res: Response) {
     return res.status(400).json(generateError('Invalid ID token payload.'));
   }
 
-  const [connection, error] = await addGoogleConnection(uId, refreshToken, googleUserId);
+  const [connection, error] = await addGoogleConnection(uId, refreshToken, googleUserId).catch((e) => {
+    console.error('addGoogleConnection failed:', e);
+    return [null, generateError('Failed to save the connection. Please try again.')] as const;
+  });
 
   if (error) {
     return res.status(400).json(error);
