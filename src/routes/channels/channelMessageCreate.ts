@@ -185,7 +185,7 @@ async function route(req: Request, res: Response) {
   const hasAttachment = body.googleDriveAttachment || body.ruginCdnFileId;
 
   if (hasAttachment) {
-    if (!isEmailConfirmed(req.userCache) && !req.userCache.bot) {
+    if (!isEmailConfirmed(req.userCache.account?.emailConfirmed) && !req.userCache.bot) {
       return res.status(400).json(generateError('You must confirm your email to send attachment messages.'));
     }
 
@@ -347,10 +347,6 @@ async function route(req: Request, res: Response) {
 
   res.json(message);
 }
-
-const isEmailConfirmed = (user: UserCache) => {
-  return user.account?.emailConfirmed;
-};
 
 const isSupporterOrModerator = (user: UserCache) => {
   return hasBit(user.badges, USER_BADGES.SUPPORTER.bit) || hasBit(user.badges, USER_BADGES.FOUNDER.bit) || hasBit(user.badges, USER_BADGES.ADMIN.bit);
