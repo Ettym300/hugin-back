@@ -1519,7 +1519,9 @@ model AsaasPayment {
   userId         String
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   asaasPaymentId String    @unique
-  days           Int
+  productType    String    @default("SUPPORTER") // SUPPORTER | BADGE
+  days           Int? // set when productType is SUPPORTER
+  badgeBit       Int? // set when productType is BADGE
   valueCents     Int
   status         String    @default("PENDING") // PENDING | CONFIRMED
   createdAt      DateTime  @default(now())

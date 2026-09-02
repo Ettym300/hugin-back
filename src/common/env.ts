@@ -77,4 +77,5 @@ export default {
   ASAAS_WEBHOOK_TOKEN: process.env.ASAAS_WEBHOOK_TOKEN as string | undefined,
   SUPPORTER_PRICE_CENTS: parseInt(process.env.SUPPORTER_PRICE_CENTS || '1000'), // R$10,00
   SUPPORTER_DAYS_PER_PAYMENT: parseInt(process.env.SUPPORTER_DAYS_PER_PAYMENT || '30'),
+  BADGE_PRICE_CENTS: parseInt(process.env.BADGE_PRICE_CENTS || '500'), // R$5,00, per cosmetic badge
 };

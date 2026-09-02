@@ -1,6 +1,8 @@
 import { prisma } from '../../common/database';
 import { USER_BADGES, addBit } from '../../common/Bitwise';
 import { removeUserCacheByUserIds } from '../../cache/UserCache';
+import { generateId } from '../../common/flakeId';
+import { InventoryItemType } from './User';
 
 /**
  * Extends (or starts) a user's SUPPORTER subscription by `days`, from
@@ -38,4 +40,23 @@ export async function grantSupporterDays(userId: string, days: number) {
   await removeUserCacheByUserIds([userId]);
 
   return { supporterExpiresAt, badges: updatedUser.badges };
+}
+
+/**
+ * Grants permanent ownership (inventory) of a purchased cosmetic badge.
+ * Does not equip it — the user turns it on themselves from the badge
+ * catalog, same as any other owned-but-unequipped badge.
+ */
+export async function grantBadgeInventory(userId: string, badgeBit: number) {
+  const valid = Object.values(USER_BADGES).find((b) => b.bit === badgeBit);
+  if (!valid) return null;
+
+  await prisma.inventoryItem.upsert({
+    where: { userId_itemType_itemId: { userId, itemType: InventoryItemType.BADGE, itemId: badgeBit.toString() } },
+    create: { id: generateId(), userId, itemType: InventoryItemType.BADGE, itemId: badgeBit.toString() },
+    update: {},
+  });
+
+  await removeUserCacheByUserIds([userId]);
+  return true;
 }

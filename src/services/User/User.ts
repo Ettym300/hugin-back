@@ -780,12 +780,11 @@ export async function toggleBadge(userId: string, badgeBit: number) {
     return [null, generateError('Invalid badge bit')] as const;
   }
 
-  // Cosmetic overlays + supporter badges are free for everyone (Hugin behavior).
   const isOverlay = 'overlay' in badge && Boolean(badge.overlay);
-  const isFreeBadge =
-    isOverlay ||
-    badgeBit === USER_BADGES.SUPPORTER.bit ||
-    badgeBit === USER_BADGES.EMO_SUPPORTER.bit;
+  // Supporter badges stay free for everyone; cosmetic overlays ("animal
+  // ears") are purchasable one-time items now — ownership (inventory) is
+  // required to equip them, same as before Hugin briefly made them free.
+  const isFreeBadge = badgeBit === USER_BADGES.SUPPORTER.bit || badgeBit === USER_BADGES.EMO_SUPPORTER.bit;
 
   if ('removable' in badge) {
     if (!badge.removable) {

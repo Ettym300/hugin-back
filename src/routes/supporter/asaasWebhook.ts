@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { prisma } from '../../common/database';
 import env from '../../common/env';
-import { grantSupporterDays } from '../../services/User/Supporter';
+import { grantBadgeInventory, grantSupporterDays } from '../../services/User/Supporter';
 
 export function asaasWebhook(Router: Router) {
   Router.post('/supporter/webhook/asaas', route);
@@ -50,7 +50,11 @@ async function route(req: Request, res: Response) {
     });
 
     if (payment && payment.status === 'PENDING') {
-      await grantSupporterDays(payment.userId, payment.days);
+      if (payment.productType === 'BADGE' && payment.badgeBit != null) {
+        await grantBadgeInventory(payment.userId, payment.badgeBit);
+      } else if (payment.days != null) {
+        await grantSupporterDays(payment.userId, payment.days);
+      }
       await prisma.asaasPayment.update({
         where: { id: payment.id },
         data: { status: 'CONFIRMED', confirmedAt: new Date() },
