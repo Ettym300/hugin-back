@@ -142,6 +142,7 @@ const handleAuthenticate = async (socket: Socket, payload: Payload) => {
           dmStatus: true,
           friendRequestStatus: true,
           emailConfirmed: true,
+          supporterExpiresAt: true,
         },
       },
     },
@@ -294,6 +295,7 @@ const handleAuthenticate = async (socket: Socket, payload: Payload) => {
       lastOnlineStatus: user.lastOnlineStatus,
       emailConfirmed:
         !env.EMAIL_CONFIRMATION_ENABLED || !!user.account?.emailConfirmed,
+      supporterExpiresAt: user.account?.supporterExpiresAt,
       connections: user.connections,
       notices: user.notices,
       reminders: user.reminders.map(transformReminder),
