@@ -27,6 +27,7 @@ import { RemindersRouter } from './routes/reminders/Router';
 import { WebhooksRouter } from './routes/webhooks/Router';
 import { Oauth2Router } from './routes/oauth2/Router';
 import { CdnRouter } from './routes/cdn/Router';
+import { SupporterRouter } from './routes/supporter/Router';
 import { createDevCdnRouter } from './devCdn/devCdnRouter';
 import { ensureDevCdnDirs } from './devCdn/devCdn';
 
@@ -129,4 +130,5 @@ if (env.TYPE === 'api') {
   app.use('/api', WebhooksRouter);
   app.use('/api', Oauth2Router);
   app.use('/api', CdnRouter);
+  app.use('/api', SupporterRouter);
 }

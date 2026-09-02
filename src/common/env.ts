@@ -66,4 +66,15 @@ export default {
   LIVEKIT_API_KEY: process.env.LIVEKIT_API_KEY as string | undefined,
   LIVEKIT_API_SECRET: process.env.LIVEKIT_API_SECRET as string | undefined,
   LIVEKIT_PUBLIC_WS_URL: process.env.LIVEKIT_PUBLIC_WS_URL as string | undefined,
+
+  // Asaas (supporter checkout) — empty ASAAS_API_KEY disables the feature.
+  ASAAS_API_KEY: process.env.ASAAS_API_KEY as string | undefined,
+  ASAAS_BASE_URL: (process.env.ASAAS_BASE_URL as string) || 'https://api-sandbox.asaas.com',
+  // Shared secret we choose and set as the webhook's authToken in the Asaas
+  // dashboard — NOT the API key. Sent back on every webhook call in the
+  // "asaas-access-token" header so we can verify a call actually came from
+  // Asaas before granting anything.
+  ASAAS_WEBHOOK_TOKEN: process.env.ASAAS_WEBHOOK_TOKEN as string | undefined,
+  SUPPORTER_PRICE_CENTS: parseInt(process.env.SUPPORTER_PRICE_CENTS || '1000'), // R$10,00
+  SUPPORTER_DAYS_PER_PAYMENT: parseInt(process.env.SUPPORTER_DAYS_PER_PAYMENT || '30'),
 };

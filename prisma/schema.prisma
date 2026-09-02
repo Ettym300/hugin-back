@@ -242,7 +242,8 @@ model User {
 
   ignoredTickets IgnoredTicket[]
 
-
+  asaasCustomer AsaasCustomer?
+  asaasPayments AsaasPayment[]
 
 
 
@@ -1501,4 +1502,37 @@ model ModeratorSuggestAction {
 
   reason       String?
 
+}
+
+model AsaasCustomer {
+  @@map("asaas_customers")
+  id              String   @id
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asaasCustomerId String   @unique
+  createdAt       DateTime @default(now())
+}
+
+model AsaasPayment {
+  @@map("asaas_payments")
+  id             String    @id
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  asaasPaymentId String    @unique
+  days           Int
+  valueCents     Int
+  status         String    @default("PENDING") // PENDING | CONFIRMED
+  createdAt      DateTime  @default(now())
+  confirmedAt    DateTime?
+
+  @@index([userId])
+}
+
+// Idempotency guard for incoming Asaas webhook deliveries — Asaas's own
+// recommendation is to key on the event's own id and let a unique
+// constraint reject re-processing of a retried delivery.
+model AsaasWebhookEvent {
+  @@map("asaas_webhook_events")
+  id         String   @id
+  receivedAt DateTime @default(now())
 }
