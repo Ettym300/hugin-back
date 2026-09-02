@@ -19,6 +19,7 @@ model Account {
   suspendCount    Int     @default(0) // How many times the user has been suspended.
   warnCount       Int     @default(0) // How many times the user has been warned.
   warnExpiresAt   DateTime? // Reset when the user is warned after 6 months.
+  supporterExpiresAt DateTime? // SUPPORTER badge is auto-revoked once this passes. Granted manually by mods after an off-platform payment (Pix/Ko-fi).
   postNotificationCount  Int                     @default(0)
   serverOrderIds   String[]
   dmStatus               Int                     @default(0)

@@ -30,6 +30,11 @@ interface Body {
   emailConfirmed?: boolean;
   addedInventoryItems?: { itemType: string; itemId: string }[];
   removedInventoryIds?: string[];
+
+  /** Extends (or starts) the SUPPORTER subscription by this many days from
+   * whichever is later: now, or the existing expiry. Auto-revoked by a
+   * daily job once it passes (see removeExpiredSupporters in index.ts). */
+  supporterDays?: number;
 }
 
 async function route(req: Request, res: Response) {
@@ -64,8 +69,25 @@ async function route(req: Request, res: Response) {
 
   if (!user?.account && !user?.application) return res.status(404).json(generateError('User does not exist.'));
 
+  if (body.supporterDays !== undefined) {
+    if (!user.account) {
+      return res.status(400).json(generateError('Bots cannot be granted a supporter subscription.'));
+    }
+    if (!Number.isFinite(body.supporterDays) || body.supporterDays <= 0) {
+      return res.status(400).json(generateError('supporterDays must be a positive number.'));
+    }
+  }
+
   let newBadges = user.badges;
   let modifiedFounder = false;
+  let newSupporterExpiresAt: Date | undefined;
+
+  if (body.supporterDays) {
+    const currentExpiry = user.account?.supporterExpiresAt;
+    const base = currentExpiry && currentExpiry.getTime() > Date.now() ? currentExpiry.getTime() : Date.now();
+    newSupporterExpiresAt = new Date(base + body.supporterDays * 24 * 60 * 60 * 1000);
+    newBadges = addBit(newBadges, USER_BADGES.SUPPORTER.bit);
+  }
 
   if (body.addedInventoryItems?.length) {
     body.addedInventoryItems.forEach((i) => {
@@ -118,6 +140,7 @@ async function route(req: Request, res: Response) {
           password: await bcrypt.hash(body.newPassword.trim(), 10),
         }
       : undefined),
+    ...(newSupporterExpiresAt ? { supporterExpiresAt: newSupporterExpiresAt } : undefined),
   };
 
   const newUser = await prisma.user.update({
@@ -159,6 +182,7 @@ async function route(req: Request, res: Response) {
       account: {
         select: {
           email: true,
+          supporterExpiresAt: true,
         },
       },
       profile: true,

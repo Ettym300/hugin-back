@@ -17,6 +17,7 @@ import { createQueueProcessor } from '@nerimity/mimiqueue';
 import { deleteServer } from './services/Server';
 import { getHourStart, isString } from './common/utils';
 import { SESSION_ID_TO_USER_ID } from './cache/CacheKeys';
+import { USER_BADGES } from './common/Bitwise';
 
 (Date.prototype.toJSON as unknown as (this: Date) => number) = function () {
   return this.getTime();
@@ -62,6 +63,7 @@ if (cluster.isPrimary) {
       scheduleServerDeletion();
       removeExpiredBannedIpsSchedule();
       removeExpiredSuspensions();
+      scheduleRemoveExpiredSupporters();
       scheduleWebhookMessagesDelete();
       cleanupServerHourlyMessageCount();
     }
@@ -349,6 +351,50 @@ async function removeExpiredBannedIpsSchedule() {
 
   schedule.scheduleJob(rule, async () => {
     await removeExpiredBannedIps();
+  });
+}
+
+async function removeExpiredSupporters() {
+  const expired = await prisma.account.findMany({
+    where: {
+      supporterExpiresAt: {
+        not: null,
+        lte: new Date(),
+      },
+    },
+    select: { userId: true },
+  });
+  if (!expired.length) return;
+
+  const users = await prisma.user.findMany({
+    where: { id: { in: expired.map((a) => a.userId) } },
+    select: { id: true, badges: true },
+  });
+
+  const stillSupporter = users.filter((u) => (u.badges & USER_BADGES.SUPPORTER.bit) !== 0);
+  if (!stillSupporter.length) return;
+
+  await prisma.$transaction(
+    stillSupporter.map((u) =>
+      prisma.user.update({
+        where: { id: u.id },
+        data: { badges: u.badges & ~USER_BADGES.SUPPORTER.bit },
+      }),
+    ),
+  );
+
+  Log.info(`Removed the SUPPORTER badge from ${stillSupporter.length} expired account(s).`);
+}
+
+async function scheduleRemoveExpiredSupporters() {
+  await removeExpiredSupporters().catch((err) => console.error(err));
+  // Schedule the task to run everyday at 0:05 UTC
+  const rule = new schedule.RecurrenceRule();
+  rule.hour = 0;
+  rule.minute = 5;
+
+  schedule.scheduleJob(rule, async () => {
+    await removeExpiredSupporters().catch((err) => console.error(err));
   });
 }
 

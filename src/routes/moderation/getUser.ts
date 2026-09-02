@@ -66,6 +66,7 @@ async function route(req: Request, res: Response) {
           email: req.hasAdminOrCreatorBadge,
           emailConfirmCode: req.hasAdminOrCreatorBadge,
           emailConfirmed: true,
+          supporterExpiresAt: true,
         },
       },
     },
