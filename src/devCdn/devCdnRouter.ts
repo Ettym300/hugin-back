@@ -7,6 +7,7 @@ import {
   devCdnPublicRoot,
   ensureDevCdnDirs,
   generateDevCdnToken,
+  proxyImageDimensions,
   saveDevCdnUpload,
   verifyDevCdnUpload,
   verifyDevCdnUploadToken,
@@ -179,6 +180,22 @@ export function createDevCdnRouter() {
     }
 
     res.json(result);
+  });
+
+  router.get('/proxy-dimensions', checkInternalSecret, async (req, res) => {
+    const url = req.query.url;
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json(generateError('url is required.'));
+    }
+
+    try {
+      const dimensions = await proxyImageDimensions(url);
+      res.json(dimensions);
+    } catch (err) {
+      res
+        .status(400)
+        .json(generateError(err instanceof Error ? err.message : 'Could not process image.'));
+    }
   });
 
   router.post('/avatars/:groupId', (req, res) => handleUploadRoute(req, res, 'avatars'));
